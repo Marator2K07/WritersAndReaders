@@ -18,7 +18,11 @@ public:
     explicit Book(QObject *parent = nullptr);
 
 signals:
+    void updated();
 
+public slots:
+    void write(QList<QString> text);
+    void read(QList<QString> text);
 };
 
 #endif // BOOK_H
