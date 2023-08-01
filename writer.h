@@ -5,6 +5,7 @@
 #include "book.h"
 
 #include <QObject>
+#include <QRandomGenerator>
 
 class Writer : public QObject
 {
@@ -12,6 +13,14 @@ class Writer : public QObject
 private:
     Book *book;
     QList<QString> latestText;
+    const QString possibleCharacters; // в этой строке представлены символы, которые использует писатель в книге
+    const short maxLineWidth;
+    const short minLineWidth;
+
+private:
+    QString makeWord(short *charactersLeft);
+    QString makeLine(short *charactersLeft);
+    void makeText();
 
 public:
     explicit Writer(Book *book,
@@ -19,7 +28,7 @@ public:
     ///
     /// \brief completingWork основной метод класса, в котором писатель во
     /// время пришедшего вдохновения продолжает писать книгу
-    void completingWork();
+    void completingWork();    
 
 signals:
     /// начал писать книгу
