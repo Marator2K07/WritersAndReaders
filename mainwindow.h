@@ -2,9 +2,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <writer.h>
+#include <book.h>
+
 #include <QMainWindow>
-
-
 
 class MainWindow : public QMainWindow
 
