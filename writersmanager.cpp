@@ -8,11 +8,13 @@ WritersManager::WritersManager(short count,
     , book{book}
     , QObject{parent}
 {
+    // создание и инициализация переменных для каждого из писателей
     QList<QString> *latestText = new QList<QString>;
-    QMutex *locker = new QMutex;
-    // создание списка писателей
+    QMutex *openWriteLocker = new QMutex;
+    QMutex *textLocker = new QMutex;
+    // создание инициализированного списка писателей
     for (int i = 0; i < count; ++i) {
-        writers.append(new Writer(locker, latestText));
+        writers.append(new Writer(openWriteLocker, textLocker, latestText));
     }
     // создание и инициализация списка потоков для писателей
     // и инициализация соединений у списка писателей
