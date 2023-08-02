@@ -5,9 +5,14 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    Book *book = new Book();
-    Writer *writer = new Writer(book, this);
-    writer->completingWork();
+    book = new Book();
+    manager = new WritersManager(2, book, this);
+
+    field = new QTextEdit("OLOLO", this);
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(field);
+    this->setLayout(layout);
 }
 
 MainWindow::~MainWindow()

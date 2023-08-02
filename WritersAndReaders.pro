@@ -10,14 +10,18 @@ CONFIG += c++17
 
 SOURCES += \
     book.cpp \
+    formatter.cpp \
     main.cpp \
     mainwindow.cpp \
-    writer.cpp
+    writer.cpp \
+    writersmanager.cpp
 
 HEADERS += \
     book.h \
+    formatter.h \
     mainwindow.h \
-    writer.h
+    writer.h \
+    writersmanager.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

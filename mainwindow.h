@@ -2,15 +2,20 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <writer.h>
-#include <book.h>
+#include "writersmanager.h"
 
 #include <QMainWindow>
+#include <QTextEdit>
+#include <QVBoxLayout>
 
 class MainWindow : public QMainWindow
 
 {
     Q_OBJECT
+private:
+    Book *book;
+    WritersManager *manager;
+    QTextEdit *field;
 
 public:
     MainWindow(QWidget *parent = nullptr);
