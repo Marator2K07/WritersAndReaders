@@ -2,6 +2,8 @@
 #ifndef BOOK_H
 #define BOOK_H
 
+#include "formatter.h"
+
 #include <QObject>
 #include <QFile>
 #include <QList>

@@ -15,7 +15,7 @@ void Book::write(QList<QString> *text)
     // написанный текст, писал ли он его ранее один или нет..., это решает
     // проблему с копиями в сохраненном тексте
     if (*currentWritersNumber == 1) {
-        buffer = *text; // делаем копию текста
+        buffer = Formatter::splitIntoBookLines(*text); // перед сохранением, приведем коллекцию к нормальному виду
         if (book.open(QIODevice::WriteOnly | QIODevice::Text)) {
             QTextStream out(&book);
             foreach (QString line, buffer) {
