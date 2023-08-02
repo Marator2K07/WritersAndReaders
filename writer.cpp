@@ -21,57 +21,44 @@ QString Writer::makeWord(short *charactersLeft)
     return word;
 }
 
-QString Writer::makeLine(short *charactersLeft)
-{
-    QString line;
-    short lineWidth = 0;
-    short border = QRandomGenerator::global()->bounded(minLineWidth, maxLineWidth);
-    if (*charactersLeft < border) {
-        border = *charactersLeft;
-    }
-    // заполняем строку случайными словами
-    while (*charactersLeft > 1 && lineWidth < border) {
-        QString newWord = makeWord(charactersLeft); // написали новое "слово"
-        lineWidth += newWord.size(); // записали обновленную длину строки
-        line.append(newWord); // пишем слово в строку
-        line.append(" "); // не забываем добавить пробел между словами
-    }
-    line.chop(1);
-    line.append(".\n");
-    *charactersLeft -= lineWidth; // напоследок обновляем количество оставшихся символов
-    return line;
-}
-
-void Writer::makeText()
-{
-    short leftBorder = 3;
-    short rightBorder = 333;
-    short charactersLeft = QRandomGenerator::global()->bounded(leftBorder, rightBorder);
-    while (charactersLeft > 1) {
-        latestText.append(makeLine(&charactersLeft));
-    }
-}
-
-Writer::Writer(Book *book,
+Writer::Writer(QMutex *openWriteLocker,
+               QMutex *textLocker,
+               QList<QString> *latestText,
                QObject *parent)
-    : QObject{parent}
-    , book{book}
+    : openWriteLocker{openWriteLocker}
+    , textLocker{textLocker}
+    , latestText{latestText}
+    , QObject{parent}
     , possibleCharacters{"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"}
     , maxLineWidth{130}
     , minLineWidth{80}
 {
-    // сразу сходу соединяем сигналы начала и конца работы с книгой
-    // с соотвествующими слотами у книги
-    connect(this, SIGNAL(started(QList<QString>)),
-            book, SLOT(read(QList<QString>)));
-    connect(this, SIGNAL(finished(QList<QString>)),
-            book, SLOT(write(QList<QString>)));
 }
 
-void Writer::completingWork()
+void Writer::working()
 {
+    /// тестовая реализация, но недалеко от правды находящаяся
+    ///
+    QThread::msleep(3333);
+    // при открытии файла и записи данных из него используем мьютекс
+    openWriteLocker->lock();
+    emit came(1); // также в синхронайзд области находится и изменение количества писателей
     emit started(latestText);
-    makeText();
+    openWriteLocker->unlock();
+    short leftBorder = 3;
+    short rightBorder = 333;
+    short charactersLeft = QRandomGenerator::global()->bounded(leftBorder, rightBorder);
+    while (charactersLeft >= 1) {
+        QThread::msleep(123);
+        // что бы и при добавлении новых слов проблем не было, используем другой мьютекс
+        textLocker->lock();
+        latestText->append(makeWord(&charactersLeft));
+        textLocker->unlock();
+    }
+    // при открытии файла и записи данных в него используем мьютекс
+    openWriteLocker->lock();
     emit finished(latestText);
+    emit gone(-1); // также в синхронайзд области находится и изменение количества писателей
+    openWriteLocker->unlock();
 }
 
