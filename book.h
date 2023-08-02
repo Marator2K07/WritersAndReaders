@@ -13,16 +13,21 @@ class Book : public QObject
 private:
     QFile book;
     QList<QString> buffer;
+    short *currentWritersNumber;
 
 public:
     explicit Book(QObject *parent = nullptr);
 
-signals:
-    void updated();
-
 public slots:
-    void write(QList<QString> text);
-    void read(QList<QString> text);
+    ///
+    /// \brief write условный писатель дописал, что хотел и сохраняет изменения
+    /// \param text обновленный текст книги
+    void write(QList<QString> *text);
+    ///
+    /// \brief read условный писатель прочитал, что было в книге
+    /// \param text скопированный текст книги
+    void read(QList<QString> *text);
+    void updateWritersNumber(short num);
 };
 
 #endif // BOOK_H
