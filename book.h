@@ -18,6 +18,7 @@ private:
 
 public:
     explicit Book(QObject *parent = nullptr);
+    QList<QString> getText();
 
 public slots:
     ///
@@ -29,6 +30,8 @@ public slots:
     /// \param text скопированный текст книги
     void read(QList<QString> *text);
     void updateWritersNumber(short num);
+
+
 };
 
 #endif // BOOK_H

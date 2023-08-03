@@ -8,6 +8,19 @@ Book::Book(QObject *parent)
     currentWritersNumber = new short(0);
 }
 
+QList<QString> Book::getText()
+{
+    QList<QString> result;
+    if (book.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&book);
+        while (!in.atEnd()) {
+            result.append(in.readLine());
+        }
+        book.close();
+    }
+    return result;
+}
+
 void Book::write(QList<QString> *text)
 {
     // | QIODevice::Append
