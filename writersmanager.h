@@ -4,11 +4,12 @@
 
 #include "writer.h"
 #include "book.h"
+#include "smoothlyupdatedlabel.h"
 
-#include <QObject>
 #include <QThread>
+#include <QHBoxLayout>
 
-class WritersManager : public QObject
+class WritersManager : public QWidget
 {
     Q_OBJECT
 private:
@@ -20,7 +21,7 @@ private:
 public:
     explicit WritersManager(short count,
                             Book *book,
-                            QObject *parent = nullptr);
+                            QWidget *parent = nullptr);
     ~WritersManager();
 
 };
