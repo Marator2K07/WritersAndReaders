@@ -1,22 +1,18 @@
 
 #include "smoothlyupdatedlabel.h"
 
-SmoothlyUpdatedLabel::SmoothlyUpdatedLabel(QWidget *parent)
-    : QLabel(parent)
+SmoothlyUpdatedLabel::SmoothlyUpdatedLabel(QString textColor,
+                                           QWidget *parent)
+    : textColor{textColor}
     , currentIndex{0}
     , currentText{""}
     , delay{18}
+    , QLabel(parent)
 {
-    // стилистика самого виджета надписи
+    // задание стилистики самого виджета надписи
     setAlignment(Qt::AlignCenter);
     setFixedHeight(33);
-    short rgbLeftBorder = 100;
-    short rgbRightBorder = 256;
-    colorText = QColor::fromRgb(QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
-                                QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
-                                QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder));
-    QString style = QString("SmoothlyUpdatedLabel {background-color : black; color : %1}").
-                    arg(colorText.toRgb().name());
+    QString style = QString("SmoothlyUpdatedLabel {background-color : black; color : %1}").arg(textColor);
     setStyleSheet(style);
     // инициализация атрибута таймера
     timer.setInterval(delay);
