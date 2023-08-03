@@ -24,15 +24,22 @@ QString Writer::makeWord(short *charactersLeft)
 Writer::Writer(QMutex *openWriteLocker,
                QMutex *textLocker,
                QList<QString> *latestText,
+               QString textColor,
                QObject *parent)
     : openWriteLocker{openWriteLocker}
     , textLocker{textLocker}
     , latestText{latestText}
-    , QObject{parent}
     , possibleCharacters{"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"}
+    , textColor{textColor}
     , maxLineWidth{130}
     , minLineWidth{80}
+    , QObject{parent}
 {
+}
+
+const QString Writer::getTextColor()
+{
+    return textColor;
 }
 
 void Writer::working()
@@ -64,6 +71,7 @@ void Writer::working()
         textLocker->lock();
         QString newWord = makeWord(&charactersLeft);
         emit updateInfo(newWord);
+        emit writeWord(QString("<p style=\"color:%1\">%2 </p>").arg(textColor, newWord));
         latestText->append(newWord);
         textLocker->unlock();
     }

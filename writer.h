@@ -15,6 +15,7 @@ private:
     QMutex *textLocker; // мьютекс для операций записи новых слов в текст
     QList<QString> *latestText;
     const QString possibleCharacters; // в этой строке представлены символы, которые использует писатель в книге
+    const QString textColor; // текстовое представление цвета (в RGB стиле) дописываемого в книгу текста
     const short maxLineWidth;
     const short minLineWidth;
 
@@ -25,7 +26,9 @@ public:
     explicit Writer(QMutex *openWriteLocker,
                     QMutex *textLocker,
                     QList<QString> *latestText,
+                    QString textColor,
                     QObject *parent = nullptr);
+    const QString getTextColor();
 
 signals:
     /// начал писать книгу
@@ -38,6 +41,8 @@ signals:
     void gone(short);
     /// для оповещения происходящих событий в виджете надписи
     void updateInfo(const QString);
+    /// сигнал для записи слова в основной виджет для показа текста
+    void writeWord(const QString);
 
 public slots:
     ///
