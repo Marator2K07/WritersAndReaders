@@ -9,10 +9,16 @@ SmoothlyUpdatedLabel::SmoothlyUpdatedLabel(QWidget *parent)
 {
     // стилистика самого виджета надписи
     setAlignment(Qt::AlignCenter);
-    setStyleSheet(("SmoothlyUpdatedLabel {background-color : black;"
-                   "color : mediumspringgreen}"));
     setFixedHeight(33);
-    // инициализация атрибута таймера таймера
+    short rgbLeftBorder = 100;
+    short rgbRightBorder = 256;
+    colorText = QColor::fromRgb(QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
+                                QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
+                                QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder));
+    QString style = QString("SmoothlyUpdatedLabel {background-color : black; color : %1}").
+                    arg(colorText.toRgb().name());
+    setStyleSheet(style);
+    // инициализация атрибута таймера
     timer.setInterval(delay);
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateSymbol()));
 }

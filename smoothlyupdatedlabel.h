@@ -6,6 +6,8 @@
 #include <QWidget>
 #include <QTimer>
 #include <QColor>
+#include <QRandomGenerator>
+#include <QDebug>
 
 class SmoothlyUpdatedLabel : public QLabel
 {
@@ -17,6 +19,7 @@ private:
     QTimer timer;
     QString currentText; // текущий текст
     QString finalText; // текст, который в итоге должен быть отображен
+    QColor colorText; // случайный цвет для более наглядного восприятия работы виджета вместе с другими
 
 public:
     SmoothlyUpdatedLabel(QWidget* parent = nullptr);
