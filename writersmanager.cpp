@@ -12,13 +12,18 @@ WritersManager::WritersManager(short count,
     QList<QString> *latestText = new QList<QString>;
     QMutex *openWriteLocker = new QMutex;
     QMutex *textLocker = new QMutex;
-    // создание инициализированного списка писателей
+    // создание инициализированного списка писателей с случайным цветом текста
+    short rgbLeftBorder = 100;
+    short rgbRightBorder = 256;
     for (int i = 0; i < count; ++i) {
-        writers.append(new Writer(openWriteLocker, textLocker, latestText));
+        writers.append(new Writer(openWriteLocker, textLocker, latestText,
+                                  QColor::fromRgb(QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
+                                                  QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
+                                                  QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder)).name()));
     }
+    // заранее создаем и инциализируем компоновщика, чтобы использовать его в цикле далее
     QHBoxLayout *layout = new QHBoxLayout(this);
-    // создание и инициализация списка потоков для писателей
-    // и инициализация соединений у списка писателей
+    // сигнально - слотовые и другие операции над каждым из писателей
     foreach (Writer *writer, writers) {
         // соединяем сигналы начала и конца работы писателей
         // с соотвествующими слотами у книги
@@ -26,8 +31,8 @@ WritersManager::WritersManager(short count,
         connect(writer, SIGNAL(finished(QList<QString>*)), book, SLOT(write(QList<QString>*)));
         connect(writer, SIGNAL(came(short)), book, SLOT(updateWritersNumber(short)));
         connect(writer, SIGNAL(gone(short)), book, SLOT(updateWritersNumber(short)));
-        // теперь идет соединение сигнала писателя со слотом изменения текста в свежем виджете плавной надписи
-        SmoothlyUpdatedLabel *writerInfo = new SmoothlyUpdatedLabel(this);
+        // теперь идет соединение сигнала писателя со слотом изменения текста в свежесозданном виджете плавной надписи
+        SmoothlyUpdatedLabel *writerInfo = new SmoothlyUpdatedLabel(writer->getTextColor(), this);
         connect(writer, SIGNAL(updateInfo(QString)), writerInfo, SLOT(changeText(QString)));
         // layout settings
         layout->addWidget(writerInfo);
@@ -38,6 +43,11 @@ WritersManager::WritersManager(short count,
         threads.append(thread);
         thread->start();
     }
+}
+
+const QList<Writer *> WritersManager::getWriters()
+{
+    return writers;
 }
 
 WritersManager::~WritersManager()

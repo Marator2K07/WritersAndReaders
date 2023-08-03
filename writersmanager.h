@@ -8,6 +8,7 @@
 
 #include <QThread>
 #include <QHBoxLayout>
+#include <QColor>
 
 class WritersManager : public QWidget
 {
@@ -22,6 +23,7 @@ public:
     explicit WritersManager(short count,
                             Book *book,
                             QWidget *parent = nullptr);
+    const QList<Writer *> getWriters();
     ~WritersManager();
 
 };
