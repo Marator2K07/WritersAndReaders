@@ -3,9 +3,9 @@
 #define MAINWINDOW_H
 
 #include "writersmanager.h"
+#include "autoscrollabletextedit.h"
 
 #include <QMainWindow>
-#include <QTextEdit>
 #include <QVBoxLayout>
 
 class MainWindow : public QMainWindow
@@ -17,7 +17,7 @@ private:
     QVBoxLayout *baseLayout;
     Book *book;
     WritersManager *manager;
-    QTextEdit *field;
+    AutoScrollableTextEdit *field;
 
 public:
     MainWindow(QWidget *parent = nullptr);
