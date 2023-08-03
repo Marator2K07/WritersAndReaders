@@ -36,6 +36,8 @@ signals:
     void came(short);
     /// для оповещения уменьшения количества работающих писателей
     void gone(short);
+    /// для оповещения происходящих событий в виджете надписи
+    void updateInfo(const QString);
 
 public slots:
     ///
