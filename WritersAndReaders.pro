@@ -13,6 +13,7 @@ SOURCES += \
     formatter.cpp \
     main.cpp \
     mainwindow.cpp \
+    smoothlyupdatedlabel.cpp \
     writer.cpp \
     writersmanager.cpp
 
@@ -20,6 +21,7 @@ HEADERS += \
     book.h \
     formatter.h \
     mainwindow.h \
+    smoothlyupdatedlabel.h \
     writer.h \
     writersmanager.h
 

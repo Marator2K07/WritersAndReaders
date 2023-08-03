@@ -6,7 +6,6 @@
 
 #include <QObject>
 #include <QFile>
-#include <QList>
 #include <QTextStream>
 
 class Book : public QObject
