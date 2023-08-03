@@ -37,9 +37,19 @@ Writer::Writer(QMutex *openWriteLocker,
 
 void Writer::working()
 {
-    /// тестовая реализация, но недалеко от правды находящаяся
+    /// тестовая реализация, уже более продвинутая
     ///
-    QThread::msleep(3333);
+    short defaultPause = 1500;
+    short leftPauseBorder = 2222;
+    short rightPauseBorder = 3333;
+
+    emit updateInfo("Писатель пришел");
+    QThread::msleep(QRandomGenerator::global()->bounded(leftPauseBorder, rightPauseBorder));
+    emit updateInfo("Дождался вдохновения");
+    QThread::msleep(defaultPause);
+    emit updateInfo("Начинает дописывать книгу");
+    QThread::msleep(defaultPause);
+
     // при открытии файла и записи данных из него используем мьютекс
     openWriteLocker->lock();
     emit came(1); // также в синхронайзд области находится и изменение количества писателей
@@ -49,10 +59,12 @@ void Writer::working()
     short rightBorder = 333;
     short charactersLeft = QRandomGenerator::global()->bounded(leftBorder, rightBorder);
     while (charactersLeft >= 1) {
-        QThread::msleep(123);
+        QThread::msleep(222);
         // что бы и при добавлении новых слов проблем не было, используем другой мьютекс
         textLocker->lock();
-        latestText->append(makeWord(&charactersLeft));
+        QString newWord = makeWord(&charactersLeft);
+        emit updateInfo(newWord);
+        latestText->append(newWord);
         textLocker->unlock();
     }
     // при открытии файла и записи данных в него используем мьютекс
@@ -60,5 +72,13 @@ void Writer::working()
     emit finished(latestText);
     emit gone(-1); // также в синхронайзд области находится и изменение количества писателей
     openWriteLocker->unlock();
+
+    emit updateInfo("Вдохновение ушло");
+    QThread::msleep(defaultPause);
+    emit updateInfo("Закончил писать книгу");
+    QThread::msleep(defaultPause);
+    emit updateInfo("Писатель уходит");
+    QThread::msleep(defaultPause);
+    emit updateInfo("");
 }
 
