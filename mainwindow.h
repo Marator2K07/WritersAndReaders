@@ -13,6 +13,8 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 private:
+    QWidget *centralWidget;
+    QVBoxLayout *baseLayout;
     Book *book;
     WritersManager *manager;
     QTextEdit *field;
