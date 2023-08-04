@@ -20,7 +20,9 @@ private:
     // более наглядного восприятия работы виджета вместе с другими
 
 public:
-    explicit SmoothlyUpdatedLabel(QString textColor,
+    explicit SmoothlyUpdatedLabel(Qt::Alignment align,
+                                  short delay,
+                                  QString textColor,
                                   QWidget *parent);
 
 private slots:

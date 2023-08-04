@@ -1,17 +1,20 @@
 
 #include "smoothlyupdatedlabel.h"
 
-SmoothlyUpdatedLabel::SmoothlyUpdatedLabel(QString textColor,
+SmoothlyUpdatedLabel::SmoothlyUpdatedLabel(Qt::Alignment align,
+                                           short delay,
+                                           QString textColor,
                                            QWidget *parent)
     : textColor{textColor}
     , currentIndex{0}
     , currentText{""}
-    , delay{18}
+    , delay{delay}
     , QLabel(parent)
 {
     // задание стилистики самого виджета надписи
-    setAlignment(Qt::AlignCenter);
+    setAlignment(align);
     setFixedHeight(33);
+    setMargin(11);
     QString style = QString("SmoothlyUpdatedLabel {background-color : black; color : %1}").arg(textColor);
     setStyleSheet(style);
     // инициализация атрибута таймера
