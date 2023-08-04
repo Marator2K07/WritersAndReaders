@@ -18,7 +18,7 @@ public:
 
 signals:
     /// сигнал о необходимости подгрузки всего текста книги
-    void updateBookText(QString &text);
+    void updateBookText(QList<QString> *text);
     /// для оповещения происходящих событий в виджете надписи
     void updateInfo(const QString);
 
