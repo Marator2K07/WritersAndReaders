@@ -11,7 +11,6 @@ class Writer : public QObject
 {
     Q_OBJECT
 private:
-    QMutex *openWriteLocker; // мьютекс для операций загрузки/сохранения
     QMutex *textLocker; // мьютекс для операций записи новых слов в текст
     QList<QString> *latestText;
     const QString possibleCharacters; // в этой строке представлены символы, которые использует писатель в книге
@@ -23,8 +22,7 @@ private:
     QString makeWord(short *charactersLeft);
 
 public:
-    explicit Writer(QMutex *openWriteLocker,
-                    QMutex *textLocker,
+    explicit Writer(QMutex *textLocker,
                     QList<QString> *latestText,
                     QString textColor,
                     QObject *parent = nullptr);

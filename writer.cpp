@@ -27,13 +27,11 @@ QString Writer::makeWord(short *charactersLeft)
     return word;
 }
 
-Writer::Writer(QMutex *openWriteLocker,
-               QMutex *textLocker,
+Writer::Writer(QMutex *textLocker,
                QList<QString> *latestText,
                QString textColor,
                QObject *parent)
-    : openWriteLocker{openWriteLocker}
-    , textLocker{textLocker}
+    : textLocker{textLocker}
     , latestText{latestText}
     , possibleCharacters{"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"}
     , textColor{textColor}
@@ -63,11 +61,9 @@ void Writer::working()
     emit updateInfo("Начинает дописывать книгу");
     QThread::msleep(defaultPause);
 
-    // при открытии файла и записи данных из него используем мьютекс
-    openWriteLocker->lock();
-    emit came(1); // также в синхронайзд области находится и изменение количества писателей
+    emit came(1);
     emit started(latestText);
-    openWriteLocker->unlock();
+
     // основная часть
     short leftBorder = 3;
     short rightBorder = 333;
@@ -82,11 +78,9 @@ void Writer::working()
         latestText->append(newWord);
         textLocker->unlock();
     }
-    // при открытии файла и записи данных в него используем мьютекс
-    openWriteLocker->lock();
+
     emit finished(latestText);
-    emit gone(-1); // также в синхронайзд области находится и изменение количества писателей
-    openWriteLocker->unlock();
+    emit gone(-1);
 
     // заключительная часть
     emit updateInfo("Вдохновение ушло");
