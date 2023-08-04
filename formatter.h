@@ -4,7 +4,6 @@
 
 #include <QObject>
 #include <QList>
-#include <QRandomGenerator>
 
 class Formatter : public QObject
 {

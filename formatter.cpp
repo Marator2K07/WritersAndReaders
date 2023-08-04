@@ -20,19 +20,12 @@ QList<QString> Formatter::splitIntoBookLines(const QList<QString> text)
             thisIndex = 0;
         }
         else if (!listElement.endsWith(" ")) {
-            // с шансом один к пяти есть вероятность поставить точку в конце слова
-            // чтобы больше походило на текст настоящий
-            if (QRandomGenerator::global()->bounded(0, 4) == 0) {
-                listElement.append(".");
-            }
             listElement.append(" ");
             thisIndex++;
         }
 
         result.append(listElement);
     }
-
-
     return result;
 }
 

@@ -17,7 +17,13 @@ QString Writer::makeWord(short *charactersLeft)
                     at(QRandomGenerator::global()->bounded(0,
                                                            possibleCharacters.size())));
     }
-    *charactersLeft -= wordLenght; // напоследок обновляем количество оставшихся символов
+    *charactersLeft -= wordLenght; // обновляем количество оставшихся символов
+    // один к 6 шанс поставить точку, чтобы больше имитировать текст
+    short chance = QRandomGenerator::global()->bounded(1,6);
+    if (chance == 1) {
+        word.append(".");
+        *charactersLeft -= wordLenght; // обновляем количество оставшихся символов
+    }
     return word;
 }
 
@@ -46,10 +52,10 @@ void Writer::working()
 {
     /// тестовая реализация, уже более продвинутая
     ///
+    // подготовительная часть
     short defaultPause = 1500;
     short leftPauseBorder = 2222;
     short rightPauseBorder = 3333;
-
     emit updateInfo("Писатель пришел");
     QThread::msleep(QRandomGenerator::global()->bounded(leftPauseBorder, rightPauseBorder));
     emit updateInfo("Дождался вдохновения");
@@ -62,6 +68,7 @@ void Writer::working()
     emit came(1); // также в синхронайзд области находится и изменение количества писателей
     emit started(latestText);
     openWriteLocker->unlock();
+    // основная часть
     short leftBorder = 3;
     short rightBorder = 333;
     short charactersLeft = QRandomGenerator::global()->bounded(leftBorder, rightBorder);
@@ -81,6 +88,7 @@ void Writer::working()
     emit gone(-1); // также в синхронайзд области находится и изменение количества писателей
     openWriteLocker->unlock();
 
+    // заключительная часть
     emit updateInfo("Вдохновение ушло");
     QThread::msleep(defaultPause);
     emit updateInfo("Закончил писать книгу");
