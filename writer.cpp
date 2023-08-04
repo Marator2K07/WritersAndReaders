@@ -35,8 +35,6 @@ Writer::Writer(QMutex *textLocker,
     , latestText{latestText}
     , possibleCharacters{"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"}
     , textColor{textColor}
-    , maxLineWidth{130}
-    , minLineWidth{80}
     , QObject{parent}
 {
 }
@@ -46,7 +44,7 @@ const QString Writer::getTextColor()
     return textColor;
 }
 
-void Writer::working()
+void Writer::startProcess()
 {
     /// тестовая реализация, уже более продвинутая
     ///

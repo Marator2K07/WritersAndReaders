@@ -37,7 +37,7 @@ WritersManager::WritersManager(short count,
         layout->addWidget(writerInfo);
         // теперь работа с потоком
         QThread *thread = new QThread(this);
-        connect(thread, SIGNAL(started()), writer, SLOT(working()));
+        connect(thread, SIGNAL(started()), writer, SLOT(startProcess()));
         writer->moveToThread(thread);
         threads.append(thread);
         thread->start();

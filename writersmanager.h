@@ -6,7 +6,6 @@
 #include "book.h"
 #include "smoothlyupdatedlabel.h"
 
-#include <QThread>
 #include <QHBoxLayout>
 #include <QColor>
 

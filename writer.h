@@ -15,8 +15,6 @@ private:
     QList<QString> *latestText;
     const QString possibleCharacters; // в этой строке представлены символы, которые использует писатель в книге
     const QString textColor; // текстовое представление цвета (в RGB стиле) дописываемого в книгу текста
-    const short maxLineWidth;
-    const short minLineWidth;
 
 private:
     QString makeWord(short *charactersLeft);
@@ -44,9 +42,9 @@ signals:
 
 public slots:
     ///
-    /// \brief working основной слот-метод класса, в котором писатель во
+    /// \brief startProcess основной слот-метод класса, в котором писатель во
     /// время пришедшего вдохновения продолжает писать книгу
-    void working();
+    void startProcess();
 };
 
 #endif // WRITER_H
