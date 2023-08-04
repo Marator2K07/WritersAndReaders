@@ -10,13 +10,12 @@ WritersManager::WritersManager(short count,
 {
     // создание и инициализация переменных для каждого из писателей
     QList<QString> *latestText = new QList<QString>;
-    QMutex *openWriteLocker = new QMutex;
     QMutex *textLocker = new QMutex;
     // создание инициализированного списка писателей с случайным цветом текста
     short rgbLeftBorder = 100;
     short rgbRightBorder = 256;
     for (int i = 0; i < count; ++i) {
-        writers.append(new Writer(openWriteLocker, textLocker, latestText,
+        writers.append(new Writer(textLocker, latestText,
                                   QColor::fromRgb(QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
                                                   QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
                                                   QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder)).name()));
