@@ -20,7 +20,7 @@ private:
 
 public:
     explicit Book(QObject *parent = nullptr);
-    QList<QString> getText();
+    const QList<QString> getText();
 
 public slots:
     ///

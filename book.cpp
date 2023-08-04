@@ -8,7 +8,7 @@ Book::Book(QObject *parent)
     currentWritersNumber = new short(0);
 }
 
-QList<QString> Book::getText()
+const QList<QString> Book::getText()
 {
     access.lock();
     QList<QString> result;
