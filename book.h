@@ -31,8 +31,11 @@ public slots:
     /// \brief read условный писатель прочитал, что было в книге
     /// \param text скопированный текст книги
     void read(QList<QString> *text);
+    ///
+    /// \brief simpleRead спец слот для читателей, чтобы получать текст книги
+    /// \param text текст - куда нужно загрузить строки
+    void simpleRead(QList<QString> *text);
     void updateWritersNumber(short num);
-
 
 };
 

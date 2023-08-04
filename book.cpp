@@ -65,6 +65,19 @@ void Book::read(QList<QString> *text)
     }
 }
 
+void Book::simpleRead(QList<QString> *text)
+{
+    access.lock();
+    if (book.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&book);
+        while (!in.atEnd()) {
+            text->append(in.readLine());
+        }
+        book.close();
+    }
+    access.unlock();
+}
+
 void Book::updateWritersNumber(short num)
 {
     access.lock();
