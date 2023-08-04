@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QFile>
 #include <QTextStream>
+#include <QMutex>
 
 class Book : public QObject
 {
@@ -15,6 +16,7 @@ private:
     QFile book;
     QList<QString> buffer;
     short *currentWritersNumber;
+    QMutex access;
 
 public:
     explicit Book(QObject *parent = nullptr);
