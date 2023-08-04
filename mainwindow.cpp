@@ -11,14 +11,15 @@ MainWindow::MainWindow(QWidget *parent)
     baseLayout = new QVBoxLayout(centralWidget);
     // инициализация остальных атрибутов класса
     book = new Book();
-    manager = new WritersManager(4, book, this); // первый передаваемый параметр - количество писателей
+    writersManager = new WritersManager(3, book, this); // первый передаваемый параметр - количество писателей
+    readersManager = new ReadersManager(3, book, this); // первый передаваемый параметр - количество читателей
     field = new AutoScrollableTextEdit(this);
     field->setReadOnly(true);
     field->setStyleSheet("QTextEdit {background-color : black;"
                          "color : white}");
     // каждый писатель теперь может показывать какое слово он дописал в книгу
     // через виджет текствого поля
-    foreach (Writer *writer, manager->getWriters()) {
+    foreach (Writer *writer, writersManager->getWriters()) {
         connect(writer, SIGNAL(writeWord(QString)), field, SLOT(insertHtmlWithAutoScroll(QString)));
     }
     // заполняем поле текста книги
@@ -28,7 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
     }
     // layout settings
     baseLayout->addWidget(field);
-    baseLayout->addWidget(manager);
+    baseLayout->addWidget(writersManager);
+    baseLayout->addWidget(readersManager);
 
     resize(760,650);
 }

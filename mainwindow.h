@@ -3,6 +3,7 @@
 #define MAINWINDOW_H
 
 #include "writersmanager.h"
+#include "readersmanager.h"
 #include "autoscrollabletextedit.h"
 
 #include <QMainWindow>
@@ -16,7 +17,8 @@ private:
     QWidget *centralWidget;
     QVBoxLayout *baseLayout;
     Book *book;
-    WritersManager *manager;
+    WritersManager *writersManager;
+    ReadersManager *readersManager;
     AutoScrollableTextEdit *field;
 
 public:
