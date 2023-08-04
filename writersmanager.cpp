@@ -13,7 +13,7 @@ WritersManager::WritersManager(short count,
     QMutex *textLocker = new QMutex;
     // создание инициализированного списка писателей с случайным цветом текста
     short rgbLeftBorder = 100;
-    short rgbRightBorder = 256;
+    short rgbRightBorder = 200;
     for (int i = 0; i < count; ++i) {
         writers.append(new Writer(textLocker, latestText,
                                   QColor::fromRgb(QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
@@ -31,7 +31,7 @@ WritersManager::WritersManager(short count,
         connect(writer, SIGNAL(came(short)), book, SLOT(updateWritersNumber(short)));
         connect(writer, SIGNAL(gone(short)), book, SLOT(updateWritersNumber(short)));
         // теперь идет соединение сигнала писателя со слотом изменения текста в свежесозданном виджете плавной надписи
-        SmoothlyUpdatedLabel *writerInfo = new SmoothlyUpdatedLabel(writer->getTextColor(), this);
+        SmoothlyUpdatedLabel *writerInfo = new SmoothlyUpdatedLabel(Qt::AlignCenter, 14, writer->getTextColor(), this);
         connect(writer, SIGNAL(updateInfo(QString)), writerInfo, SLOT(changeText(QString)));
         // layout settings
         layout->addWidget(writerInfo);
