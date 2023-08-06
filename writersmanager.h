@@ -25,6 +25,20 @@ public:
     const QList<Writer *> getWriters();
     ~WritersManager();
 
+signals:
+    void anyoneStarted();
+    void allFinished();
+
+public slots:
+    ///
+    /// \brief beginningAnalysis нужен, чтобы понять, начал ли кто-нибудь
+    /// из писателей дописывать книгу
+    void beginningAnalysis();
+    ///
+    /// \brief completionAnalysis нужен чтобы понять, все ли писатели
+    /// закончили дописывать книгу
+    void completionAnalysis();
+
 };
 
 #endif // WRITERSMANAGER_H

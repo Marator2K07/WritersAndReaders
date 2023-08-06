@@ -24,10 +24,10 @@ WritersManager::WritersManager(short count,
     QHBoxLayout *layout = new QHBoxLayout(this);
     // сигнально - слотовые и другие операции над каждым из писателей
     foreach (Writer *writer, writers) {
-        // соединяем сигналы начала и конца работы писателей
-        // с соотвествующими слотами у книги
+        // соединяем сигналы начала и конца работы писателей с соотвествующими слотами у книги
         connect(writer, SIGNAL(started(QList<QString>*)), book, SLOT(read(QList<QString>*)));
         connect(writer, SIGNAL(finished(QList<QString>*)), book, SLOT(write(QList<QString>*)));
+        // сейчас сигналы прихода и ухода писателя с слотом книги
         connect(writer, SIGNAL(came(short)), book, SLOT(updateWritersNumber(short)));
         connect(writer, SIGNAL(gone(short)), book, SLOT(updateWritersNumber(short)));
         // теперь идет соединение сигнала писателя со слотом изменения текста в свежесозданном виджете плавной надписи
@@ -37,7 +37,11 @@ WritersManager::WritersManager(short count,
         layout->addWidget(writerInfo);
         // теперь работа с потоком
         QThread *thread = new QThread(this);
-        connect(thread, SIGNAL(started()), writer, SLOT(startProcess()));
+        // и его сигналами/слотами
+        connect(thread, SIGNAL(started()), writer, SLOT(completingWork()));
+        connect(thread, SIGNAL(finished()), this, SLOT(completionAnalysis()));
+        connect(writer, SIGNAL(beginExecution()), this, SLOT(beginningAnalysis()));
+        connect(writer, SIGNAL(endExecution()), thread, SLOT(quit()));
         writer->moveToThread(thread);
         threads.append(thread);
         thread->start();
@@ -57,3 +61,29 @@ WritersManager::~WritersManager()
     }
 }
 
+void WritersManager::beginningAnalysis()
+{
+    short numberOfBeginners = 0;
+    foreach (QThread *thread, threads) {
+        if (thread->isRunning()) {
+            numberOfBeginners++;
+        }
+    }
+    // достаточно один раз отправить сигнал о приходе какого-либо писателя
+    if (numberOfBeginners >= 1) {
+        emit anyoneStarted();
+    }
+}
+
+void WritersManager::completionAnalysis()
+{
+    bool isComplete = true;
+    foreach (QThread *thread, threads) {
+        if (thread->isRunning()) {
+            isComplete = false;
+        }
+    }
+    if (isComplete) {
+        emit allFinished();
+    }
+}
