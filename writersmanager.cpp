@@ -5,6 +5,8 @@ WritersManager::WritersManager(short count,
                                Book *book,
                                QWidget *parent)
     : count{count}
+    , minWaitingTime{1000}
+    , maxWaitingTime{3500}
     , book{book}
     , QWidget{parent}
 {
@@ -44,8 +46,10 @@ WritersManager::WritersManager(short count,
         connect(writer, SIGNAL(endExecution()), thread, SLOT(quit()));
         writer->moveToThread(thread);
         threads.append(thread);
-        thread->start();
     }
+    // через время от 1 до 3.5 секунд запускаем потоки писателей
+    QTimer::singleShot(QRandomGenerator::global()->bounded(minWaitingTime, maxWaitingTime),
+                       this, SLOT(startWriting()));
 }
 
 const QList<Writer *> WritersManager::getWriters()
@@ -85,5 +89,15 @@ void WritersManager::completionAnalysis()
     }
     if (isComplete) {
         emit allFinished();
+        // после ухода последнего писателя начинаем все действия заново..
+        QTimer::singleShot(QRandomGenerator::global()->bounded(minWaitingTime, maxWaitingTime),
+                           this, SLOT(startWriting()));
+    }
+}
+
+void WritersManager::startWriting()
+{
+    foreach (QThread *thread, threads) {
+        thread->start();
     }
 }

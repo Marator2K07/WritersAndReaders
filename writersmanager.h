@@ -8,6 +8,7 @@
 
 #include <QHBoxLayout>
 #include <QColor>
+#include <QTimer>
 
 class WritersManager : public QWidget
 {
@@ -15,8 +16,10 @@ class WritersManager : public QWidget
 private:
     Book *book;
     const short count;
+    const short minWaitingTime; // в миллисекундах
+    const short maxWaitingTime; // в миллисекундах
     QList<Writer *> writers;
-    QList<QThread *> threads; // потоки для работы писателей
+    QList<QThread *> threads; // потоки для работы писателей    
 
 public:
     explicit WritersManager(short count,
@@ -38,6 +41,10 @@ public slots:
     /// \brief completionAnalysis нужен чтобы понять, все ли писатели
     /// закончили дописывать книгу
     void completionAnalysis();
+    ///
+    /// \brief startWriting запуск всех потоков-писателей с их
+    /// главными методами задания
+    void startWriting();
 
 };
 
