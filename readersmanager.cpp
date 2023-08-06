@@ -30,7 +30,8 @@ ReadersManager::ReadersManager(short count,
         layout->addWidget(readerInfo);
         // теперь работа с потоком
         QThread *thread = new QThread(this);
-        connect(thread, SIGNAL(started()), reader, SLOT(startProcess()));
+        connect(thread, SIGNAL(started()), reader, SLOT(completingWork()));
+        connect(reader, SIGNAL(endExecution()), thread, SLOT(quit()));
         reader->moveToThread(thread);
         threads.append(thread);
         thread->start();
@@ -42,6 +43,21 @@ ReadersManager::~ReadersManager()
     foreach (QThread *thread, threads) {
         thread->quit();
         thread->wait();
+    }
+}
+
+void ReadersManager::startReading()
+{
+    foreach (QThread *thread, threads) {
+        thread->start();
+    }
+}
+
+void ReadersManager::stopReading()
+{
+    // даем знать всем подручным потокам, что при первой же возможности, стоить завершить работу
+    foreach (QThread *thread, threads) {
+        thread->requestInterruption();
     }
 }
 

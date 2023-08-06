@@ -24,7 +24,14 @@ public:
                             QWidget *parent);
     ~ReadersManager();
 
-signals:
+public slots:
+    ///
+    /// \brief startReading начать чтение для всех читателей
+    void startReading();
+    ///
+    /// \brief stopReading команда остановить выполнение всех потоков чтения
+    /// при первой же возможности
+    void stopReading();
 
 };
 
