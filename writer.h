@@ -15,6 +15,8 @@ private:
     QList<QString> *latestText;
     const QString possibleCharacters; // в этой строке представлены символы, которые использует писатель в книге
     const QString textColor; // текстовое представление цвета (в RGB стиле) дописываемого в книгу текста
+    const short minWaintingTime; // в миллисекундах
+    const short maxWaintingTime; // в миллисекундах
 
 private:
     QString makeWord(short *charactersLeft);

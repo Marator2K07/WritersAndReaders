@@ -35,6 +35,8 @@ Writer::Writer(QMutex *textLocker,
     , latestText{latestText}
     , possibleCharacters{"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"}
     , textColor{textColor}
+    , minWaintingTime{1000}
+    , maxWaintingTime{3500}
     , QObject{parent}
 {
 }
@@ -50,17 +52,14 @@ void Writer::completingWork()
 
     // подготовительная часть
     emit beginExecution();
-    short defaultPause = 1500;
-    short leftPauseBorder = 2222;
-    short rightPauseBorder = 3333;
+    emit updateInfo("Писатель пришел");
     emit came(1);
-    emit updateInfo("Писатель пришел");    
     emit started(latestText);
-    QThread::msleep(QRandomGenerator::global()->bounded(leftPauseBorder, rightPauseBorder));
+    QThread::msleep(QRandomGenerator::global()->bounded(minWaintingTime, maxWaintingTime));
     emit updateInfo("Дождался вдохновения");
-    QThread::msleep(defaultPause);
+    QThread::msleep(minWaintingTime);
     emit updateInfo("Начинает дописывать книгу");
-    QThread::msleep(defaultPause);
+    QThread::msleep(minWaintingTime);
 
     // основная часть
     short leftBorder = 3;
@@ -79,14 +78,14 @@ void Writer::completingWork()
 
     // заключительная часть
     emit updateInfo("Вдохновение ушло");
-    QThread::msleep(defaultPause);
-    emit updateInfo("Закончил писать книгу");
-    QThread::msleep(defaultPause);
+    QThread::msleep(minWaintingTime);
+    emit updateInfo("Закончил писать книгу");    
+    QThread::msleep(minWaintingTime);
     emit updateInfo("Писатель уходит");
-    emit finished(latestText);
-    QThread::msleep(defaultPause);
-    emit updateInfo("");
     emit gone(-1);
+    emit finished(latestText);
+    QThread::msleep(minWaintingTime);
+    emit updateInfo("");
     emit endExecution(); // завершаем поток одновременно с завершением метода
 }
 
