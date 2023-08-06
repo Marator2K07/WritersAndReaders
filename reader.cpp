@@ -6,9 +6,9 @@ Reader::Reader(QObject *parent)
 {
 }
 
-void Reader::startProcess()
+void Reader::completingWork()
 {
-    /// тестовая реализация
+    /// тестовая реализация, близко к истине
 
     // подготовительная часть
     short defaultPause = 1500;
@@ -21,6 +21,15 @@ void Reader::startProcess()
     QThread::msleep(defaultPause);
 
     foreach (QString line, bookText) {
+        // в случае прихода писателя
+        if (thread()->isInterruptionRequested()) {
+            emit updateInfo("Прекращает читать, так как пришел писатель");
+            QThread::msleep(defaultPause);
+            emit updateInfo("");
+            QThread::msleep(defaultPause);
+            emit endExecution(); // завершаем поток чтения одновременно с завершением метода
+            return;
+        }
         emit updateInfo(line);
         QThread::msleep(650);
     }
@@ -31,4 +40,5 @@ void Reader::startProcess()
     emit updateInfo("Читатель ушел");
     QThread::msleep(defaultPause);
     emit updateInfo("");
+    emit endExecution(); // завершаем поток чтения одновременно с завершением метода
 }

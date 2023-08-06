@@ -21,12 +21,15 @@ signals:
     void updateBookText(QList<QString> *text);
     /// для оповещения происходящих событий в виджете надписи
     void updateInfo(const QString);
+    /// уведомление завершения основного кода для выполнения
+    void endExecution();
 
 public slots:
     ///
-    /// \brief startProcess основной слот-метод класса, в котором читатель,
-    /// когда ушли писатели, начинает спокойно читать книгу
-    void startProcess();
+    /// \brief completingWork основной слот-метод класса, в котором читатель,
+    /// пока нет писателей - спокойно читает книгу
+    void completingWork();
+
 };
 
 #endif // READER_H
