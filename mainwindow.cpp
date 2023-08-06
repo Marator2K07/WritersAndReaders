@@ -11,8 +11,10 @@ MainWindow::MainWindow(QWidget *parent)
     baseLayout = new QVBoxLayout(centralWidget);
     // инициализация остальных атрибутов класса
     book = new Book();
-    writersManager = new WritersManager(3, book, this); // первый передаваемый параметр - количество писателей
-    readersManager = new ReadersManager(3, book, this); // первый передаваемый параметр - количество читателей
+    writersManager = new WritersManager(2, book, this); // первый передаваемый параметр - количество писателей
+    readersManager = new ReadersManager(3, book, this); // первый передаваемый параметр - количество читателей    
+    connect(writersManager, SIGNAL(anyoneStarted()), readersManager, SLOT(stopReading()));
+    connect(writersManager, SIGNAL(allFinished()), readersManager, SLOT(startReading()));
     field = new AutoScrollableTextEdit(this);
     field->setReadOnly(true);
     field->setStyleSheet("QTextEdit {background-color : black;"
