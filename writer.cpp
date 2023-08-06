@@ -44,23 +44,23 @@ const QString Writer::getTextColor()
     return textColor;
 }
 
-void Writer::startProcess()
+void Writer::completingWork()
 {
-    /// тестовая реализация, уже более продвинутая
-    ///
+    /// тестовая реализация,    
+
     // подготовительная часть
+    emit beginExecution();
     short defaultPause = 1500;
     short leftPauseBorder = 2222;
     short rightPauseBorder = 3333;
-    emit updateInfo("Писатель пришел");
+    emit came(1);
+    emit updateInfo("Писатель пришел");    
+    emit started(latestText);
     QThread::msleep(QRandomGenerator::global()->bounded(leftPauseBorder, rightPauseBorder));
     emit updateInfo("Дождался вдохновения");
     QThread::msleep(defaultPause);
     emit updateInfo("Начинает дописывать книгу");
     QThread::msleep(defaultPause);
-
-    emit came(1);
-    emit started(latestText);
 
     // основная часть
     short leftBorder = 3;
@@ -77,16 +77,16 @@ void Writer::startProcess()
         textLocker->unlock();
     }
 
-    emit finished(latestText);
-    emit gone(-1);
-
     // заключительная часть
     emit updateInfo("Вдохновение ушло");
     QThread::msleep(defaultPause);
     emit updateInfo("Закончил писать книгу");
     QThread::msleep(defaultPause);
     emit updateInfo("Писатель уходит");
+    emit finished(latestText);
     QThread::msleep(defaultPause);
     emit updateInfo("");
+    emit gone(-1);
+    emit endExecution(); // завершаем поток одновременно с завершением метода
 }
 

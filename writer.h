@@ -39,12 +39,17 @@ signals:
     void updateInfo(const QString);
     /// сигнал для записи слова в основной виджет для показа текста
     void writeWord(const QString);
+    /// уведомление начала выполнения основного кода
+    void beginExecution();
+    /// уведомление завершения основного кода для выполнения
+    void endExecution();
 
 public slots:
     ///
-    /// \brief startProcess основной слот-метод класса, в котором писатель во
+    /// \brief completingWork основной слот-метод класса, в котором писатель во
     /// время пришедшего вдохновения продолжает писать книгу
-    void startProcess();
+    void completingWork();
+
 };
 
 #endif // WRITER_H
