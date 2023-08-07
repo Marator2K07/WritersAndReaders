@@ -11,18 +11,22 @@ MainWindow::MainWindow(QWidget *parent)
     baseLayout = new QVBoxLayout(centralWidget);
     // инициализация остальных атрибутов класса
     book = new Book();
-    writersManager = new WritersManager(2, book, this); // первый передаваемый параметр - количество писателей
-    readersManager = new ReadersManager(3, book, this); // первый передаваемый параметр - количество читателей    
-    connect(writersManager, SIGNAL(anyoneStarted()), readersManager, SLOT(stopReading()));
+    QWaitCondition *waitCondition = new QWaitCondition;
+    QMutex *waitConditionLocker = new QMutex;
+    writersManager = new WritersManager(3, book, waitCondition, this); // первый передаваемый параметр - свое количество писателей
+    readersManager = new ReadersManager(4, book, waitCondition, waitConditionLocker, this); // первый передаваемый параметр - свое количество читателей
     connect(writersManager, SIGNAL(allFinished()), readersManager, SLOT(startReading()));
     field = new AutoScrollableTextEdit(this);
     field->setReadOnly(true);
     field->setStyleSheet("QTextEdit {background-color : black;"
                          "color : white}");
-    // каждый писатель теперь может показывать какое слово он дописал в книгу
-    // через виджет текствого поля
+    // каждый писатель теперь может показывать какое слово он дописал в книгу через виджет текствого поля
     foreach (Writer *writer, writersManager->getWriters()) {
         connect(writer, SIGNAL(writeWord(QString)), field, SLOT(insertHtmlWithAutoScroll(QString)));
+    }
+    // каждый читатель в состоянии узнать, активен ли хоть один писатель в данный момент времени
+    foreach (Reader *reader, readersManager->getReaders()) {
+        connect(reader, SIGNAL(checkWritersActivity(bool*)), writersManager, SLOT(writersActivityAnalysis(bool*)));
     }
     // заполняем поле текста книги
     QList<QString> bookLines = book->getText();
