@@ -35,8 +35,7 @@ Writer::Writer(QMutex *textLocker,
     , latestText{latestText}
     , possibleCharacters{"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"}
     , textColor{textColor}
-    , minWaintingTime{1000}
-    , maxWaintingTime{3500}
+    , pauseDuration{800}
     , QObject{parent}
 {
 }
@@ -51,22 +50,21 @@ void Writer::completingWork()
     /// тестовая реализация,    
 
     // подготовительная часть
-    emit beginExecution();
     emit updateInfo("Писатель пришел");
+    QThread::msleep(QRandomGenerator::global()->bounded(pauseDuration, pauseDuration * 2));
     emit came(1);
     emit started(latestText);
-    QThread::msleep(QRandomGenerator::global()->bounded(minWaintingTime, maxWaintingTime));
     emit updateInfo("Дождался вдохновения");
-    QThread::msleep(minWaintingTime);
+    QThread::msleep(pauseDuration);
     emit updateInfo("Начинает дописывать книгу");
-    QThread::msleep(minWaintingTime);
+    QThread::msleep(pauseDuration);
 
     // основная часть
     short leftBorder = 3;
     short rightBorder = 333;
     short charactersLeft = QRandomGenerator::global()->bounded(leftBorder, rightBorder);
     while (charactersLeft >= 1) {
-        QThread::msleep(222);
+        QThread::msleep(pauseDuration / 4);
         // что бы и при добавлении новых слов проблем не было, используем другой мьютекс
         textLocker->lock();
         QString newWord = makeWord(&charactersLeft);
@@ -78,13 +76,13 @@ void Writer::completingWork()
 
     // заключительная часть
     emit updateInfo("Вдохновение ушло");
-    QThread::msleep(minWaintingTime);
-    emit updateInfo("Закончил писать книгу");    
-    QThread::msleep(minWaintingTime);
-    emit updateInfo("Писатель уходит");
+    QThread::msleep(pauseDuration);
+    emit updateInfo("Закончил писать книгу");
+    QThread::msleep(pauseDuration);
     emit gone(-1);
     emit finished(latestText);
-    QThread::msleep(minWaintingTime);
+    emit updateInfo("Писатель уходит");
+    QThread::msleep(pauseDuration);
     emit updateInfo("");
     emit endExecution(); // завершаем поток одновременно с завершением метода
 }
