@@ -3,11 +3,13 @@
 
 WritersManager::WritersManager(short count,
                                Book *book,
+                               QWaitCondition *writersInactivity,
                                QWidget *parent)
-    : count{count}
-    , minWaitingTime{1000}
-    , maxWaitingTime{3500}
+    : count{count} 
     , book{book}
+    , writersInactivity{writersInactivity}
+    , minWaitingTime{3000}
+    , maxWaitingTime{5500}
     , QWidget{parent}
 {
     // создание и инициализация переменных для каждого из писателей
@@ -42,12 +44,11 @@ WritersManager::WritersManager(short count,
         // и его сигналами/слотами
         connect(thread, SIGNAL(started()), writer, SLOT(completingWork()));
         connect(thread, SIGNAL(finished()), this, SLOT(completionAnalysis()));
-        connect(writer, SIGNAL(beginExecution()), this, SLOT(beginningAnalysis()));
         connect(writer, SIGNAL(endExecution()), thread, SLOT(quit()));
         writer->moveToThread(thread);
         threads.append(thread);
     }
-    // через время от 1 до 3.5 секунд запускаем потоки писателей
+    // через время от 3 до 5.5 секунд запускаем потоки писателей
     QTimer::singleShot(QRandomGenerator::global()->bounded(minWaitingTime, maxWaitingTime),
                        this, SLOT(startWriting()));
 }
@@ -65,18 +66,15 @@ WritersManager::~WritersManager()
     }
 }
 
-void WritersManager::beginningAnalysis()
+void WritersManager::writersActivityAnalysis(bool *activity)
 {
-    short numberOfBeginners = 0;
     foreach (QThread *thread, threads) {
         if (thread->isRunning()) {
-            numberOfBeginners++;
+            *activity = true;
+            return;
         }
     }
-    // достаточно один раз отправить сигнал о приходе какого-либо писателя
-    if (numberOfBeginners >= 1) {
-        emit anyoneStarted();
-    }
+    *activity = false;
 }
 
 void WritersManager::completionAnalysis()
@@ -89,6 +87,7 @@ void WritersManager::completionAnalysis()
     }
     if (isComplete) {
         emit allFinished();
+        writersInactivity->wakeAll(); // БУДИМ всех читателей
         // после ухода последнего писателя начинаем все действия заново..
         QTimer::singleShot(QRandomGenerator::global()->bounded(minWaitingTime, maxWaitingTime),
                            this, SLOT(startWriting()));
