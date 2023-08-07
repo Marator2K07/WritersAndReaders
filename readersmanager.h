@@ -8,6 +8,7 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QTimer>
 
 class ReadersManager : public QWidget
 {
@@ -15,23 +16,26 @@ class ReadersManager : public QWidget
 private:
     Book *book;
     const short count;
+    const short minWaitingTime; // в миллисекундах
+    const short maxWaitingTime; // в миллисекундах
     QList<Reader *> readers;
     QList<QThread *> threads; // потоки для работы читателей
+    QWaitCondition *writersInactivity;
+    QMutex *waitConditionLocker;
 
 public:
     explicit ReadersManager(short count,
                             Book *book,
+                            QWaitCondition *writersInactivity,
+                            QMutex *waitConditionLocker,
                             QWidget *parent);
-    ~ReadersManager();
+    const QList<Reader *> getReaders();
+    ~ReadersManager();    
 
-public slots:
+public slots:        
     ///
     /// \brief startReading начать чтение для всех читателей
     void startReading();
-    ///
-    /// \brief stopReading команда остановить выполнение всех потоков чтения
-    /// при первой же возможности
-    void stopReading();
 
 };
 

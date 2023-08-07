@@ -3,14 +3,20 @@
 
 ReadersManager::ReadersManager(short count,
                                Book *book,
+                               QWaitCondition *writersInactivity,
+                               QMutex *waitConditionLocker,
                                QWidget *parent)
     : book{book}
+    , writersInactivity{writersInactivity}
+    , waitConditionLocker{waitConditionLocker}
     , count{count}
+    , minWaitingTime{1000}
+    , maxWaitingTime{3500}
     , QWidget{parent}
 {
     // заполнение списка читаталей
     for (int i = 0; i < count; ++i) {
-        readers.append(new Reader());
+        readers.append(new Reader(writersInactivity, waitConditionLocker));
     }
     // заранее создаем и инциализируем переменные, чтобы использовать их в цикле далее
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -34,8 +40,15 @@ ReadersManager::ReadersManager(short count,
         connect(reader, SIGNAL(endExecution()), thread, SLOT(quit()));
         reader->moveToThread(thread);
         threads.append(thread);
-        thread->start();
     }
+    // через время от 1 до 3.5 секунд запускаем потоки читателей
+    QTimer::singleShot(QRandomGenerator::global()->bounded(minWaitingTime, maxWaitingTime),
+                       this, SLOT(startReading()));
+}
+
+const QList<Reader *> ReadersManager::getReaders()
+{
+    return readers;
 }
 
 ReadersManager::~ReadersManager()
@@ -49,15 +62,6 @@ ReadersManager::~ReadersManager()
 void ReadersManager::startReading()
 {
     foreach (QThread *thread, threads) {
-        thread->start();
+            thread->start();
     }
 }
-
-void ReadersManager::stopReading()
-{
-    // даем знать всем подручным потокам, что при первой же возможности, стоить завершить работу
-    foreach (QThread *thread, threads) {
-        thread->requestInterruption();
-    }
-}
-
