@@ -52,7 +52,6 @@ void Writer::completingWork()
     // подготовительная часть
     emit updateInfo("Писатель пришел");
     QThread::msleep(QRandomGenerator::global()->bounded(pauseDuration, pauseDuration * 2));
-    emit came(1);
     emit started(latestText);
     emit updateInfo("Дождался вдохновения");
     QThread::msleep(pauseDuration);
@@ -79,7 +78,6 @@ void Writer::completingWork()
     QThread::msleep(pauseDuration);
     emit updateInfo("Закончил писать книгу");
     QThread::msleep(pauseDuration);
-    emit gone(-1);
     emit finished(latestText);
     emit updateInfo("Писатель уходит");
     QThread::msleep(pauseDuration);
