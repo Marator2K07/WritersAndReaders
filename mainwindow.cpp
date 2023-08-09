@@ -15,7 +15,6 @@ MainWindow::MainWindow(QWidget *parent)
     QMutex *waitConditionLocker = new QMutex;
     writersManager = new WritersManager(3, book, waitCondition, this); // первый передаваемый параметр - свое количество писателей
     readersManager = new ReadersManager(4, book, waitCondition, waitConditionLocker, this); // первый передаваемый параметр - свое количество читателей
-    connect(writersManager, SIGNAL(allFinished()), readersManager, SLOT(startReading()));
     field = new AutoScrollableTextEdit(this);
     field->setReadOnly(true);
     field->setStyleSheet("QTextEdit {background-color : black;"
