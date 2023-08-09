@@ -37,6 +37,7 @@ void Book::finish(QList<QString> *text)
                 out << line;
             }
             book.close();
+            buffer.clear(); // не забываем чистить буффер
         }
         access.unlock();
     }
@@ -66,10 +67,9 @@ void Book::remember(QList<QString> *text)
             book.close();
         }
         access.unlock();
-        // делаем копию буфера
-        for (int i = buffer.size()-1; i >= 0; --i) {
-            text->push_front(buffer.value(i));
-        }
+        // делаем копию буфера и очищаем его
+        *text = buffer;
+        buffer.clear();
     }
 }
 
