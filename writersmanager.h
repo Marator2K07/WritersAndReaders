@@ -31,9 +31,6 @@ public:
     const QList<Writer *> getWriters();
     ~WritersManager();
 
-signals:
-    void allFinished();
-
 public slots:
     ///
     /// \brief writersActivity проверка, активен ли какойнибудь писатель в данный момент

@@ -83,7 +83,6 @@ void WritersManager::completionAnalysis()
         }
     }
     if (isComplete) {
-        emit allFinished();
         writersInactivity->wakeAll(); // БУДИМ всех читателей
         // после ухода последнего писателя начинаем все действия заново..
         QTimer::singleShot(QRandomGenerator::global()->bounded(minWaitingTime, maxWaitingTime),
