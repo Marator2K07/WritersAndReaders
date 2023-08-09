@@ -36,6 +36,10 @@ public slots:
     ///
     /// \brief startReading начать чтение для всех читателей
     void startReading();
+    ///
+    /// \brief completionAnalysis нужен чтобы понять, все ли читатели
+    /// закончили читать книгу
+    void completionAnalysis();
 
 };
 

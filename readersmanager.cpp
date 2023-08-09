@@ -37,6 +37,7 @@ ReadersManager::ReadersManager(short count,
         // теперь работа с потоком
         QThread *thread = new QThread(this);
         connect(thread, SIGNAL(started()), reader, SLOT(completingWork()));
+        connect(thread, SIGNAL(finished()), this, SLOT(completionAnalysis()));
         connect(reader, SIGNAL(endExecution()), thread, SLOT(quit()));
         reader->moveToThread(thread);
         threads.append(thread);
@@ -63,5 +64,20 @@ void ReadersManager::startReading()
 {
     foreach (QThread *thread, threads) {
             thread->start();
+    }
+}
+
+void ReadersManager::completionAnalysis()
+{
+    bool isComplete = true;
+    foreach (QThread *thread, threads) {
+        if (thread->isRunning()) {
+            isComplete = false;
+        }
+    }
+    if (isComplete) {
+        // после ухода последнего читателя начинаем все действия заново..
+        QTimer::singleShot(QRandomGenerator::global()->bounded(minWaitingTime, maxWaitingTime),
+                           this, SLOT(startReading()));
     }
 }
