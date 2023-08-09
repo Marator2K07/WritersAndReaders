@@ -5,7 +5,7 @@ Book::Book(QObject *parent)
     : QObject{parent}
 {
     book.setFileName("Book.txt");
-    currentWritersNumber = new short(0);
+    currentWritersNumber = 0;
 }
 
 const QList<QString> Book::getText()
@@ -23,12 +23,12 @@ const QList<QString> Book::getText()
     return result;
 }
 
-void Book::write(QList<QString> *text)
+void Book::finish(QList<QString> *text)
 {
     // только в случае если писатель один, он имеет право сохранить
     // написанный текст, писал ли он его ранее один или нет..., это решает
     // проблему с копиями слов в сохраненном тексте
-    if (*currentWritersNumber == 1) {
+    if (currentWritersNumber == 1) {
         access.lock();
         buffer = Formatter::splitIntoBookLines(*text); // перед сохранением, приведем коллекцию к нормальному виду
         if (book.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -40,15 +40,23 @@ void Book::write(QList<QString> *text)
         }
         access.unlock();
     }
+    // после сохранения изменений, изменяем количество писетелей
+    access.lock();
+    currentWritersNumber--;
+    access.unlock();
 }
 
-void Book::read(QList<QString> *text)
+void Book::remember(QList<QString> *text)
 {
+    // сначала обновляем количество писателей
+    access.lock();
+    currentWritersNumber++;
+    access.unlock();
     // у первого пришедшего писателя копия книги на руках и он думает, что дописать.
     // Если приходит второй - то думают уже вместе. НО к тому времени, как пришел второй,
     // первый писатель уже мог что-то придумать!!! И он условно пересказывает о своих начинаниях.
     // Это решает проблему затирания уже новых данных.
-    if (*currentWritersNumber == 1) {
+    if (currentWritersNumber == 1) {
         access.lock();
         if (book.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QTextStream in(&book);
@@ -77,11 +85,3 @@ void Book::simpleRead(QList<QString> *text)
     }
     access.unlock();
 }
-
-void Book::updateWritersNumber(short num)
-{
-    access.lock();
-    *currentWritersNumber += num;
-    access.unlock();
-}
-

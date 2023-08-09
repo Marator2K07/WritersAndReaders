@@ -15,7 +15,7 @@ class Book : public QObject
 private:
     QFile book;
     QList<QString> buffer;
-    short *currentWritersNumber;
+    short currentWritersNumber;
     QMutex access;
 
 public:
@@ -24,18 +24,17 @@ public:
 
 public slots:
     ///
-    /// \brief write условный писатель дописал, что хотел и сохраняет изменения
+    /// \brief finish условный писатель дописал, что хотел и сохраняет изменения
     /// \param text обновленный текст книги
-    void write(QList<QString> *text);
+    void finish(QList<QString> *text);
     ///
-    /// \brief read условный писатель прочитал, что было в книге
+    /// \brief remember условный писатель вспомнил, что было в книге
     /// \param text скопированный текст книги
-    void read(QList<QString> *text);
+    void remember(QList<QString> *text);
     ///
     /// \brief simpleRead спец слот для читателей, чтобы получать текст книги
     /// \param text текст - куда нужно загрузить строки
     void simpleRead(QList<QString> *text);
-    void updateWritersNumber(short num);
 
 };
 
