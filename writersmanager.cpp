@@ -29,11 +29,8 @@ WritersManager::WritersManager(short count,
     // сигнально - слотовые и другие операции над каждым из писателей
     foreach (Writer *writer, writers) {
         // соединяем сигналы начала и конца работы писателей с соотвествующими слотами у книги
-        connect(writer, SIGNAL(started(QList<QString>*)), book, SLOT(read(QList<QString>*)));
-        connect(writer, SIGNAL(finished(QList<QString>*)), book, SLOT(write(QList<QString>*)));
-        // сейчас сигналы прихода и ухода писателя с слотом книги
-        connect(writer, SIGNAL(came(short)), book, SLOT(updateWritersNumber(short)));
-        connect(writer, SIGNAL(gone(short)), book, SLOT(updateWritersNumber(short)));
+        connect(writer, SIGNAL(started(QList<QString>*)), book, SLOT(remember(QList<QString>*)));
+        connect(writer, SIGNAL(finished(QList<QString>*)), book, SLOT(finish(QList<QString>*)));
         // теперь идет соединение сигнала писателя со слотом изменения текста в свежесозданном виджете плавной надписи
         SmoothlyUpdatedLabel *writerInfo = new SmoothlyUpdatedLabel(Qt::AlignCenter, 14, writer->getTextColor(), this);
         connect(writer, SIGNAL(updateInfo(QString)), writerInfo, SLOT(changeText(QString)));
