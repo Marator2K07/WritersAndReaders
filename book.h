@@ -18,9 +18,16 @@ private:
     short currentWritersNumber;
     QMutex access;
 
+private:
+    void getLastNLines(QList<QString> &text, short count);
+
 public:
     explicit Book(QObject *parent = nullptr);
-    const QList<QString> getText();
+
+signals:
+    void clearText();
+    /// обновляем текст в виджете представления текста книги
+    void updateText(const QList<QString> text);
 
 public slots:
     ///

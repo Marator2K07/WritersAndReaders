@@ -1,26 +1,18 @@
 
 #include "book.h"
 
+void Book::getLastNLines(QList<QString> &text, short count)
+{
+    while(text.size() > count) {
+        text.removeFirst();
+    }
+}
+
 Book::Book(QObject *parent)
     : QObject{parent}
 {
     book.setFileName("Book.txt");
     currentWritersNumber = 0;
-}
-
-const QList<QString> Book::getText()
-{
-    access.lock();
-    QList<QString> result;
-    if (book.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&book);
-        while (!in.atEnd()) {
-            result.append(in.readLine());
-        }
-        book.close();
-    }
-    access.unlock();
-    return result;
 }
 
 void Book::finish(QList<QString> *text)
@@ -38,6 +30,7 @@ void Book::finish(QList<QString> *text)
             }
             book.close();
             buffer.clear(); // не забываем чистить буффер
+            emit clearText(); // уборка лишнего текста из поля с текстом книги
         }
         access.unlock();
     }
@@ -67,8 +60,12 @@ void Book::remember(QList<QString> *text)
             book.close();
         }
         access.unlock();
-        // делаем копию буфера и очищаем его
+        // делаем копию буфера
         *text = buffer;
+        // теперь для поля вывода текста книги оставляем N последних строк и выводим их
+        getLastNLines(buffer, 22);
+        emit updateText(buffer);
+        // и не забываем почистить буффер
         buffer.clear();
     }
 }
