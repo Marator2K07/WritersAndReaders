@@ -15,6 +15,7 @@ WritersManager::WritersManager(short count,
     // создание и инициализация переменных для каждого из писателей
     QList<QString> *latestText = new QList<QString>;
     QMutex *textLocker = new QMutex;
+    short *currentWidth = new short(0);
     // создание инициализированного списка писателей с случайным цветом текста
     short rgbLeftBorder = 100;
     short rgbRightBorder = 200;
@@ -22,7 +23,8 @@ WritersManager::WritersManager(short count,
         writers.append(new Writer(textLocker, latestText,
                                   QColor::fromRgb(QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
                                                   QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
-                                                  QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder)).name()));
+                                                  QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder)).name(),
+                                  currentWidth));
     }
     // заранее создаем и инциализируем компоновщика, чтобы использовать его в цикле далее
     QHBoxLayout *layout = new QHBoxLayout(this);
