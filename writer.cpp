@@ -22,7 +22,7 @@ QString Writer::makeWord(short *charactersLeft)
     short chance = QRandomGenerator::global()->bounded(1,6);
     if (chance == 1) {
         word.append(".");
-        *charactersLeft -= wordLenght; // обновляем количество оставшихся символов
+        *charactersLeft --; // обновляем количество оставшихся символов
     }
     return word;
 }
@@ -30,11 +30,13 @@ QString Writer::makeWord(short *charactersLeft)
 Writer::Writer(QMutex *textLocker,
                QList<QString> *latestText,
                QString textColor,
+               short *currentWidth,
                QObject *parent)
     : textLocker{textLocker}
     , latestText{latestText}
     , possibleCharacters{"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"}
     , textColor{textColor}
+    , currentWidth{currentWidth}
     , pauseDuration{800}
     , QObject{parent}
 {
@@ -62,14 +64,26 @@ void Writer::completingWork()
     short leftBorder = 3;
     short rightBorder = 333;
     short charactersLeft = QRandomGenerator::global()->bounded(leftBorder, rightBorder);
+    QString possibleLineBreak = "<br>";
+
     while (charactersLeft >= 1) {
         QThread::msleep(pauseDuration / 4);
         // что бы и при добавлении новых слов проблем не было, используем другой мьютекс
         textLocker->lock();
         QString newWord = makeWord(&charactersLeft);
         emit updateInfo(newWord);
-        emit writeWord(QString("<p style=\"color:%1\">%2 </p>").arg(textColor, newWord));
+        *currentWidth += newWord.size() + 1; // обновляем текущую ширину строки
         latestText->append(newWord);
+        // в зависимости от длины строки переходим на следующую или остаемся на этой
+        if (*currentWidth < 100) {
+            possibleLineBreak = " ";
+        }
+        else {
+            possibleLineBreak = "<br>";
+            *currentWidth = 0;
+        }
+        // ну и в конце уже заполняем поле с текстом книги словами писателя и разблокируем мьютекс
+        emit writeWord(QString("<p style=\"color:%1\">%2%3</p>").arg(textColor, newWord, possibleLineBreak));
         textLocker->unlock();
     }
 

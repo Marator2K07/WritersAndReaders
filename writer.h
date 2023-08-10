@@ -16,6 +16,7 @@ private:
     const QString possibleCharacters; // в этой строке представлены символы, которые использует писатель в книге
     const QString textColor; // текстовое представление цвета (в RGB стиле) дописываемого в книгу текста
     const short pauseDuration; // в миллисекундах
+    short *currentWidth; // ширина текущей заполняемой строки
 
 private:
     QString makeWord(short *charactersLeft);
@@ -24,6 +25,7 @@ public:
     explicit Writer(QMutex *textLocker,
                     QList<QString> *latestText,
                     QString textColor,
+                    short *currentWidth,
                     QObject *parent = nullptr);
     const QString getTextColor();
 
