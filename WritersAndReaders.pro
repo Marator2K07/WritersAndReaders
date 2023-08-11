@@ -11,7 +11,6 @@ CONFIG += c++17
 SOURCES += \
     autoscrollabletextedit.cpp \
     book.cpp \
-    formatter.cpp \
     main.cpp \
     mainwindow.cpp \
     reader.cpp \
@@ -23,7 +22,6 @@ SOURCES += \
 HEADERS += \
     autoscrollabletextedit.h \
     book.h \
-    formatter.h \
     mainwindow.h \
     reader.h \
     readersmanager.h \
