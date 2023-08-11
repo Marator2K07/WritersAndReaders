@@ -19,6 +19,5 @@ void AutoScrollableTextEdit::updateText(const QList<QString> text)
     foreach (QString line, text) {
         append(line);
     }
-    append("");
 }
 
