@@ -29,7 +29,7 @@ public:
                             QWaitCondition *writersInactivity,
                             QWidget *parent = nullptr);
     const QList<Writer *> getWriters();
-    ~WritersManager();
+    ~WritersManager();    
 
 public slots:
     ///
@@ -43,8 +43,7 @@ public slots:
     ///
     /// \brief startWriting запуск всех потоков-писателей с их
     /// главными методами задания
-    void startWriting();
-
+    void startWriting();    
 };
 
 #endif // WRITERSMANAGER_H

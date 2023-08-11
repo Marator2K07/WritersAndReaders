@@ -30,9 +30,10 @@ WritersManager::WritersManager(short count,
     QHBoxLayout *layout = new QHBoxLayout(this);
     // сигнально - слотовые и другие операции над каждым из писателей
     foreach (Writer *writer, writers) {
-        // соединяем сигналы начала и конца работы писателей с соотвествующими слотами у книги
+        // соединяем сигналы писателей с соотвествующими слотами у книги
         connect(writer, SIGNAL(started(QList<QString>*)), book, SLOT(remember(QList<QString>*)));
         connect(writer, SIGNAL(finished(QList<QString>*)), book, SLOT(finish(QList<QString>*)));
+        connect(book, SIGNAL(resetCurrentLineWidth()), writer, SLOT(resetCurrentWidth()));
         // теперь идет соединение сигнала писателя со слотом изменения текста в свежесозданном виджете плавной надписи
         SmoothlyUpdatedLabel *writerInfo = new SmoothlyUpdatedLabel(Qt::AlignCenter, 14, writer->getTextColor(), this);
         connect(writer, SIGNAL(updateInfo(QString)), writerInfo, SLOT(changeText(QString)));
