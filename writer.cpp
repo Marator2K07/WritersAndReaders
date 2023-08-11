@@ -64,6 +64,7 @@ void Writer::completingWork()
     short leftBorder = 3;
     short rightBorder = 333;
     short charactersLeft = QRandomGenerator::global()->bounded(leftBorder, rightBorder);
+    short maxLineWidth = 100;
     QString possibleLineBreak = "<br>";
 
     while (charactersLeft >= 1) {
@@ -73,13 +74,14 @@ void Writer::completingWork()
         QString newWord = makeWord(&charactersLeft);
         emit updateInfo(newWord);
         *currentWidth += newWord.size() + 1; // обновляем текущую ширину строки
-        latestText->append(newWord);
         // в зависимости от длины строки переходим на следующую или остаемся на этой
-        if (*currentWidth < 100) {
+        if (*currentWidth < maxLineWidth && latestText->size() >= 1) {
+            (*latestText)[latestText->size() - 1] += (newWord + " ");
             possibleLineBreak = " ";
         }
         else {
             possibleLineBreak = "<br>";
+            latestText->append(newWord);
             *currentWidth = 0;
         }
         // ну и в конце уже заполняем поле с текстом книги словами писателя и разблокируем мьютекс
@@ -97,5 +99,10 @@ void Writer::completingWork()
     QThread::msleep(pauseDuration);
     emit updateInfo("");
     emit endExecution(); // завершаем поток одновременно с завершением метода
+}
+
+void Writer::resetCurrentWidth()
+{
+    *currentWidth = 0;
 }
 
