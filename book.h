@@ -2,8 +2,6 @@
 #ifndef BOOK_H
 #define BOOK_H
 
-#include "formatter.h"
-
 #include <QObject>
 #include <QFile>
 #include <QTextStream>
@@ -28,6 +26,8 @@ signals:
     void clearText();
     /// обновляем текст в виджете представления текста книги
     void updateText(const QList<QString> text);
+    /// обнуляем текущую длину строки у писателя
+    void resetCurrentLineWidth();
 
 public slots:
     ///

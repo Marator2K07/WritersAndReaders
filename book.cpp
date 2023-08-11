@@ -22,16 +22,17 @@ void Book::finish(QList<QString> *text)
     // проблему с копиями слов в сохраненном тексте
     if (currentWritersNumber == 1) {
         access.lock();
-        buffer = Formatter::splitIntoBookLines(*text); // перед сохранением, приведем коллекцию к нормальному виду
+        buffer = *text;
         if (book.open(QIODevice::WriteOnly | QIODevice::Text)) {
             QTextStream out(&book);
             foreach (QString line, buffer) {
-                out << line;
+                out << line << "\n";
             }
             book.close();
             buffer.clear(); // не забываем чистить буффер
             emit clearText(); // уборка лишнего текста из поля с текстом книги
         }
+        emit resetCurrentLineWidth(); // обнуляем текущую длину
         access.unlock();
     }
     // после сохранения изменений, изменяем количество писетелей
@@ -56,6 +57,10 @@ void Book::remember(QList<QString> *text)
             QTextStream in(&book);
             while (!in.atEnd()) {
                 buffer.append(in.readLine());
+            }
+            // писатели начинают писать с абзаца
+            if (buffer.size() > 0) {
+                buffer.append("");
             }
             book.close();
         }
