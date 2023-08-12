@@ -1,13 +1,6 @@
 
 #include "book.h"
 
-void Book::getLastNLines(QList<QString> &text, short count)
-{
-    while(text.size() > count) {
-        text.removeFirst();
-    }
-}
-
 Book::Book(QObject *parent)
     : QObject{parent}
 {
@@ -32,7 +25,6 @@ void Book::finish(QList<QString> *text)
             buffer.clear(); // не забываем чистить буффер
             emit clearText(); // уборка лишнего текста из поля с текстом книги
         }
-        emit resetCurrentLineWidth(); // обнуляем текущую длину
         access.unlock();
     }
     // после сохранения изменений, изменяем количество писетелей
@@ -52,26 +44,43 @@ void Book::remember(QList<QString> *text)
     // первый писатель уже мог что-то придумать!!! И он условно пересказывает о своих начинаниях.
     // Это решает проблему затирания уже новых данных.
     if (currentWritersNumber == 1) {
+        // создаем и инициализируем все необходимые для расчетов переменные
+        short maxNumberOfLines = 44;
+        short currentLine = 0;
+        short currentPosition = 0;
+        QString currentSymbol = "";
+        // блокируем доступ для других потоков и пытаемся открыть книгу
         access.lock();
         if (book.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QTextStream in(&book);
-            while (!in.atEnd()) {
-                buffer.append(in.readLine());
+            // узнаем позицию последнего символа и перемещаемся туда
+            currentPosition = book.size() - 1;
+            in.seek(currentPosition);
+            buffer.append(""); // сначала нужно проинициализировать буффер
+            // а теперь посимвольно считываем строки в буффер начиная с конца и двигаясь в начало!
+            while (currentPosition >= 0 && currentLine <= maxNumberOfLines) {
+                currentSymbol = in.read(1); // читаем один символ
+                if (currentSymbol != "\n") {
+                    buffer[0].push_front(currentSymbol);
+                }
+                else {
+                    buffer.push_front("");
+                    currentPosition--;
+                    currentLine++;
+                }
+                currentPosition--;
+                in.seek(currentPosition);
             }
-            // писатели начинают писать с абзаца
+            // добавляем доп абзац для наглядности
             if (buffer.size() > 0) {
                 buffer.append("");
             }
             book.close();
         }
+        emit updateText(buffer); // пишем загруженный текст
+        *text = buffer; // делаем копию буфера
         access.unlock();
-        // делаем копию буфера
-        *text = buffer;
-        // теперь для поля вывода текста книги оставляем N последних строк и выводим их
-        getLastNLines(buffer, 22);
-        emit updateText(buffer);
-        // и не забываем почистить буффер
-        buffer.clear();
+        buffer.clear(); // и не забываем почистить буффер
     }
 }
 

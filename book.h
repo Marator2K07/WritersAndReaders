@@ -16,9 +16,6 @@ private:
     short currentWritersNumber;
     QMutex access;
 
-private:
-    void getLastNLines(QList<QString> &text, short count);
-
 public:
     explicit Book(QObject *parent = nullptr);
 
@@ -26,8 +23,6 @@ signals:
     void clearText();
     /// обновляем текст в виджете представления текста книги
     void updateText(const QList<QString> text);
-    /// обнуляем текущую длину строки у писателя
-    void resetCurrentLineWidth();
 
 public slots:
     ///
