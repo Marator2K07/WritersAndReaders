@@ -18,6 +18,20 @@ private:
     QWaitCondition *writersInactivity;
     QMutex *waitConditionLocker;
 
+private:
+    ///
+    /// \brief introduction вынесенная вступительная часть
+    /// главного метода-слота completingWork
+    void introduction();
+    ///
+    /// \brief reading вынесенная основная часть алгоритма
+    /// читателя главного метода-слота completingWork
+    void reading();
+    ///
+    /// \brief conclusion вынесенная заключительная часть
+    /// главного метода-слота completingWork
+    void conclusion();
+
 public:
     explicit Reader(QWaitCondition *writersInactivity,
                     QMutex *waitConditionLocker,
@@ -36,7 +50,8 @@ signals:
 public slots:
     ///
     /// \brief completingWork основной слот-метод класса, в котором читатель,
-    /// пока нет писателей - спокойно читает книгу
+    /// приходит, пока нет писателей - спокойно читает книгу,
+    /// и когда дочитывает - уходит
     void completingWork();
 
 };

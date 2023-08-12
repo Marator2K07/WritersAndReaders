@@ -1,27 +1,17 @@
 
 #include "reader.h"
 
-Reader::Reader(QWaitCondition *writersInactivity,
-               QMutex *waitConditionLocker,
-               QObject *parent)
-    : writersInactivity{writersInactivity}
-    , waitConditionLocker{waitConditionLocker}
-    , pauseDuration{700}
-    , QObject{parent}
+void Reader::introduction()
 {
-}
-
-void Reader::completingWork()
-{
-    /// тестовая реализация, близко к истине
-
-    // подготовительная часть
     emit updateBookText(&bookText);
     emit updateInfo("Читатель пришел");
     QThread::msleep(QRandomGenerator::global()->bounded(pauseDuration, pauseDuration * 2));
     emit updateInfo("Начинает читать книгу");
     QThread::msleep(pauseDuration);
+}
 
+void Reader::reading()
+{
     bool writersIsActive = false;
     foreach (QString line, bookText) {
         emit checkWritersActivity(&writersIsActive);
@@ -38,14 +28,32 @@ void Reader::completingWork()
         }
         emit updateInfo(line);
         QThread::msleep(pauseDuration / 2);
-
     }
+}
 
-    // заключительная часть
+void Reader::conclusion()
+{
     emit updateInfo("Закончил читать");
     QThread::msleep(pauseDuration);
     emit updateInfo("Читатель ушел");
     QThread::msleep(pauseDuration);
     emit updateInfo("");
     emit endExecution(); // завершаем поток чтения одновременно с завершением метода
+}
+
+Reader::Reader(QWaitCondition *writersInactivity,
+               QMutex *waitConditionLocker,
+               QObject *parent)
+    : writersInactivity{writersInactivity}
+    , waitConditionLocker{waitConditionLocker}
+    , pauseDuration{700}
+    , QObject{parent}
+{
+}
+
+void Reader::completingWork()
+{
+    introduction();
+    reading();
+    conclusion();
 }
