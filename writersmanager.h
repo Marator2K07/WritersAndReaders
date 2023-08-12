@@ -19,6 +19,7 @@ private:
     const short count;
     const short minWaitingTime; // в миллисекундах
     const short maxWaitingTime; // в миллисекундах
+    short *currentLineWidth;
     QList<Writer *> writers;
     QList<QThread *> threads; // потоки для работы писателей
     QWaitCondition *writersInactivity;

@@ -15,7 +15,7 @@ WritersManager::WritersManager(short count,
     // создание и инициализация переменных для каждого из писателей
     QList<QString> *latestText = new QList<QString>;
     QMutex *textLocker = new QMutex;
-    short *currentWidth = new short(0);
+    currentLineWidth = new short(0);
     // создание инициализированного списка писателей с случайным цветом текста
     short rgbLeftBorder = 100;
     short rgbRightBorder = 200;
@@ -24,7 +24,7 @@ WritersManager::WritersManager(short count,
                                   QColor::fromRgb(QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
                                                   QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder),
                                                   QRandomGenerator::global()->bounded(rgbLeftBorder, rgbRightBorder)).name(),
-                                  currentWidth));
+                                  currentLineWidth));
     }
     // заранее создаем и инциализируем компоновщика, чтобы использовать его в цикле далее
     QHBoxLayout *layout = new QHBoxLayout(this);
@@ -33,7 +33,6 @@ WritersManager::WritersManager(short count,
         // соединяем сигналы писателей с соотвествующими слотами у книги
         connect(writer, SIGNAL(started(QList<QString>*)), book, SLOT(remember(QList<QString>*)));
         connect(writer, SIGNAL(finished(QList<QString>*)), book, SLOT(finish(QList<QString>*)));
-        connect(book, SIGNAL(resetCurrentLineWidth()), writer, SLOT(resetCurrentWidth()));
         // теперь идет соединение сигнала писателя со слотом изменения текста в свежесозданном виджете плавной надписи
         SmoothlyUpdatedLabel *writerInfo = new SmoothlyUpdatedLabel(Qt::AlignCenter, 14, writer->getTextColor(), this);
         connect(writer, SIGNAL(updateInfo(QString)), writerInfo, SLOT(changeText(QString)));
@@ -87,6 +86,7 @@ void WritersManager::completionAnalysis()
     }
     if (isComplete) {
         writersInactivity->wakeAll(); // БУДИМ всех читателей
+        *currentLineWidth = 0; // обнуляем текущую ширину строки
         // после ухода последнего писателя начинаем все действия заново..
         QTimer::singleShot(QRandomGenerator::global()->bounded(minWaitingTime, maxWaitingTime),
                            this, SLOT(startWriting()));
