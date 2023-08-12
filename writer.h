@@ -20,6 +20,18 @@ private:
 
 private:
     QString makeWord(short *charactersLeft);
+    ///
+    /// \brief introduction вынесенная вступительная часть алгоритма
+    /// основного метода-слота completingWork
+    void introduction();
+    ///
+    /// \brief writing вынесенная основная часть алгоритма
+    /// писателя главного метода-слота completingWork
+    void writing();
+    ///
+    /// \brief conclusion вынесенная заключительная часть алгоритма
+    /// основного метода-слота completingWork
+    void conclusion();
 
 public:
     explicit Writer(QMutex *textLocker,
@@ -43,8 +55,10 @@ signals:
 
 public slots:
     ///
-    /// \brief completingWork основной слот-метод класса, в котором писатель во
-    /// время пришедшего вдохновения продолжает писать книгу
+    /// \brief completingWork основной слот-метод класса, в котором писатель
+    /// после прихода на рабочее место ждет вдохновения...
+    /// во время пришедшего вдохновения продолжает писать книгу,
+    /// после того как закончит - уходит
     void completingWork();
 
 };
