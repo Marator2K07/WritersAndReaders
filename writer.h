@@ -46,9 +46,6 @@ public slots:
     /// \brief completingWork основной слот-метод класса, в котором писатель во
     /// время пришедшего вдохновения продолжает писать книгу
     void completingWork();
-    ///
-    /// \brief resetCurrentWidth обнуление текущей длины строки
-    void resetCurrentWidth();
 
 };
 

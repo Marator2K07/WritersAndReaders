@@ -69,20 +69,20 @@ void Writer::completingWork()
 
     while (charactersLeft >= 1) {
         QThread::msleep(pauseDuration / 4);
-        // что бы и при добавлении новых слов проблем не было, используем другой мьютекс
+        // что бы и при добавлении новых слов проблем не было, используем мьютекс
         textLocker->lock();
         QString newWord = makeWord(&charactersLeft);
         emit updateInfo(newWord);
         *currentWidth += newWord.size() + 1; // обновляем текущую ширину строки
         // в зависимости от длины строки переходим на следующую или остаемся на этой
-        if (*currentWidth < maxLineWidth && latestText->size() >= 1) {
+        if (*currentWidth < maxLineWidth) {
             (*latestText)[latestText->size() - 1] += (newWord + " ");
             possibleLineBreak = " ";
         }
         else {
             possibleLineBreak = "<br>";
-            latestText->append(newWord);
-            *currentWidth = 0;
+            latestText->append(newWord + " ");
+            *currentWidth = newWord.size() + 1;
         }
         // ну и в конце уже заполняем поле с текстом книги словами писателя и разблокируем мьютекс
         emit writeWord(QString("<p style=\"color:%1\">%2%3</p>").arg(textColor, newWord, possibleLineBreak));
@@ -100,9 +100,3 @@ void Writer::completingWork()
     emit updateInfo("");
     emit endExecution(); // завершаем поток одновременно с завершением метода
 }
-
-void Writer::resetCurrentWidth()
-{
-    *currentWidth = 0;
-}
-
